@@ -1,0 +1,41 @@
+# ASP.NET Core 編譯輸出
+bin/
+obj/
+logs/
+wwwroot/
+
+# NuGet 相關
+*.nupkg
+*.snupkg
+.nuget/
+
+# VS Code 設定
+.vscode/
+*.code-workspace
+
+# 使用者設定與 IDE 特定檔案
+*.suo
+*.user
+*.userosscache
+*.rsuser
+
+# Rider / ReSharper
+_ReSharper*/
+*.DotSettings.user
+
+# Docker
+docker-compose.override.yml
+
+# SQL Server 資料庫檔案
+*.mdf
+*.ldf
+
+# 本機測試/除錯檔案
+TestResults/
+coverage/
+*.coverage
+*.trx
+
+# 其他
+.DS_Store
+Thumbs.db
