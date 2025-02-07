@@ -1,0 +1,6 @@
+@api_HostAddress = http://localhost:5167
+
+GET http://localhost:5167/api/WorkOrder
+Accept: application/json
+
+###
