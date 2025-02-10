@@ -1,8 +1,6 @@
 # ASP.NET Core 編譯輸出
-bin/
-obj/
-logs/
-wwwroot/
+**/bin/
+**/obj/
 
 # NuGet 相關
 *.nupkg
