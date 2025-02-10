@@ -53,6 +53,10 @@ namespace api.Repository
                 {
                     workOrders = queryObject.IsDecsending ? workOrders.OrderByDescending(w => w.Title) : workOrders.OrderBy(w => w.Title);
                 }
+                if (queryObject.SortBy.Equals("EndDate", StringComparison.OrdinalIgnoreCase))
+                {
+                    workOrders = queryObject.IsDecsending ? workOrders.OrderByDescending(w => w.EndDate) : workOrders.OrderBy(w => w.EndDate);
+                }
             }
             var skipNumber = (queryObject.PageNumber - 1) * queryObject.PageSize;
             return await workOrders.Skip(skipNumber).Take(queryObject.PageSize).ToListAsync();

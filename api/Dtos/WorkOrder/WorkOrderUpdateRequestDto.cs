@@ -6,7 +6,7 @@ namespace api.Dtos.WorkOrder
     public class WorkOrderUpdateRequestDto
     {
         [Required]
-        [MaxLength(10, ErrorMessage = "Title cannot be more than 10 characters")]
+        [MaxLength(100, ErrorMessage = "Title cannot be more than 10 characters")]
         public string Title { get; set; } = string.Empty;
 
         [Required]
