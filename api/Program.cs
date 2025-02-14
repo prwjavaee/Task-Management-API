@@ -1,7 +1,9 @@
 using api.Data;
 using api.Interfaces;
 using api.Models;
+using api.Models.Log;
 using api.Repository;
+using api.Repository.Log;
 using api.Service;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
@@ -101,14 +103,30 @@ builder.Services.AddAuthentication(options =>
             context.Response.StatusCode = StatusCodes.Status401Unauthorized;
             context.Response.ContentType = "application/json";
             var result = System.Text.Json.JsonSerializer.Serialize(new { error = "需要有效的 Token" });
-            return context.Response.WriteAsync(result);
+            context.Response.WriteAsync(result);
+
+            context.HttpContext.Items["ErrorLog"] = new ErrorLog
+            {
+                ErrorCode = StatusCodes.Status401Unauthorized,
+                ErrorType = "Unauthorized",
+                ErrorMessage = "需要有效的 Token",
+            };
+            return Task.CompletedTask; //繼續流向後續的中間件，不會因為認證失敗中斷
         },
         OnForbidden = context =>
         {
             context.Response.StatusCode = StatusCodes.Status403Forbidden;
             context.Response.ContentType = "application/json";
             var result = System.Text.Json.JsonSerializer.Serialize(new { error = "您的權限不足" });
-            return context.Response.WriteAsync(result);
+            context.Response.WriteAsync(result);
+
+            context.HttpContext.Items["ErrorLog"] = new ErrorLog
+            {
+                ErrorCode = StatusCodes.Status403Forbidden,
+                ErrorType = "Forbidden",
+                ErrorMessage = "您的權限不足",
+            };
+            return Task.CompletedTask;            
         }
     };
 });
@@ -126,6 +144,9 @@ builder.Services.AddAuthorization(options =>
 // DI 不需要手動建立依賴物件，而是由框架自動提供
 builder.Services.AddScoped<IWorkOrderRepository, WorkOrderRepository>();
 builder.Services.AddScoped<ITokenService, TokenService>();
+builder.Services.AddScoped<IApiLogRepository, ApiLogRepository>();
+builder.Services.AddScoped<LogActionFilter>();
+builder.Services.AddScoped<IErrorLogRepository, ErrorLogRepository>();
 
 
 var app = builder.Build();
@@ -139,6 +160,8 @@ if (app.Environment.IsDevelopment())
 
 app.UseHttpsRedirection();
 
+//錯誤日誌
+app.UseMiddleware<ErrorLoggingMiddleware>();
 //驗證
 app.UseAuthentication();
 //授權

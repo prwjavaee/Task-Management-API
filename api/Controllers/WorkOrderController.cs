@@ -16,6 +16,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace api.Controllers
 {
+    [ServiceFilter(typeof(LogActionFilter))]
     [Route("api/WorkOrder")]
     [ApiController] // Web API 的輔助屬性 自動模型驗證&自動綁定來源
     [Authorize] //需要Token
@@ -40,6 +41,7 @@ namespace api.Controllers
         }
 
         [AllowAnonymous] // 允許匿名 公開這個api 不須token
+        [ServiceFilter(typeof(LogActionFilter), IsReusable = false)]
         [HttpGet("test")]
         public IActionResult Test()
         {
@@ -79,8 +81,8 @@ namespace api.Controllers
             workOrder.AppUser = appUser;
             await _workOrderRepo.CreateAsync(workOrder);
             // ActionName , RouteValue , Obj ; 導向方法，方法參數，回傳類型
-            // return CreatedAtAction(nameof(GetById), new { id = workOrder.Id }, workOrder.ToWorkOrderDto());
-            return Created();
+            return CreatedAtAction(nameof(GetById), new { id = workOrder.Id }, workOrder.ToWorkOrderDto());
+            // return Created();
         }
 
         [Authorize(Policy = "AuthorizedUserOnly")]

@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using api.Models;
+using api.Models.Log;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
@@ -18,6 +19,8 @@ namespace api.Data
         }
 
         public DbSet<WorkOrder> WorkOrders { get; set; }
+        public DbSet<ApiLog> ApiLogs { get; set; }
+        public DbSet<ErrorLog> ErrorLogs { get; set; }
 
         protected override void OnModelCreating(ModelBuilder builder)
         {
@@ -28,6 +31,16 @@ namespace api.Data
                 .WithMany(a => a.WorkOrder)
                 .HasForeignKey(w => w.AppUserId)
                 .OnDelete(DeleteBehavior.Cascade);
+
+            builder.Entity<ApiLog>()
+                .HasOne(al => al.AppUser)
+                .WithMany(a => a.ApiLog)
+                .HasForeignKey(al => al.AppUserId)
+                .OnDelete(DeleteBehavior.Cascade);
+
+            builder.Entity<ErrorLog>()
+                .Property(e => e.Id)
+                .ValueGeneratedOnAdd();
 
             List<IdentityRole> roles = new List<IdentityRole>
             {
