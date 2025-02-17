@@ -10,10 +10,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
-<<<<<<< HEAD
-=======
 using StackExchange.Redis;
->>>>>>> 9a5308c (feat: add Redis caching for WorkOrder GetAll)
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -54,11 +51,8 @@ builder.Services.AddSwaggerGen(option =>
     });
 });
 
-<<<<<<< HEAD
-// 避免循環引用
-=======
+
 // 避免循環引用 **只針對Controller
->>>>>>> 9a5308c (feat: add Redis caching for WorkOrder GetAll)
 builder.Services.AddControllers().AddNewtonsoftJson(options =>
 {
     options.SerializerSettings.ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore;
@@ -69,13 +63,11 @@ builder.Services.AddDbContext<ApplicationDBContext>(options =>
 {
     options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection"));
 });
-<<<<<<< HEAD
-=======
+
 // Redis
 builder.Services.AddSingleton<IConnectionMultiplexer>(
     ConnectionMultiplexer.Connect(builder.Configuration.GetConnectionString("Redis"))
 );
->>>>>>> 9a5308c (feat: add Redis caching for WorkOrder GetAll)
 
 // Identity 註冊身份驗證機制 (使用者 & 角色管理)
 builder.Services.AddIdentity<AppUser, IdentityRole>(options =>
@@ -162,11 +154,8 @@ builder.Services.AddScoped<ITokenService, TokenService>();
 builder.Services.AddScoped<IApiLogRepository, ApiLogRepository>();
 builder.Services.AddScoped<LogActionFilter>();
 builder.Services.AddScoped<IErrorLogRepository, ErrorLogRepository>();
-<<<<<<< HEAD
-=======
 builder.Services.AddScoped<IWorkOrderService, WorkOrderService>();
 
->>>>>>> 9a5308c (feat: add Redis caching for WorkOrder GetAll)
 
 
 var app = builder.Build();
