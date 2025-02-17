@@ -4,6 +4,10 @@ using System.Linq;
 using System.Threading.Tasks;
 using api.Data;
 using api.Dtos.WorkOrder;
+<<<<<<< HEAD
+=======
+using api.Extensions;
+>>>>>>> 9a5308c (feat: add Redis caching for WorkOrder GetAll)
 using api.Interfaces;
 using api.Models;
 using api.QueryObjects;
@@ -39,6 +43,7 @@ namespace api.Repository
         public async Task<List<WorkOrder>> GetAllAsync(WorkOrderQueryObject queryObject, AppUser appUser)
         {
             var workOrders = _context.WorkOrders.AsQueryable();
+<<<<<<< HEAD
 
             if (appUser != null)
             {
@@ -60,6 +65,9 @@ namespace api.Repository
             }
             var skipNumber = (queryObject.PageNumber - 1) * queryObject.PageSize;
             return await workOrders.Skip(skipNumber).Take(queryObject.PageSize).ToListAsync();
+=======
+            return await workOrders.ApplyQuery(queryObject,appUser).ToListAsync();;
+>>>>>>> 9a5308c (feat: add Redis caching for WorkOrder GetAll)
         }
 
         public async Task<WorkOrder?> GetByIdAsync(int id)

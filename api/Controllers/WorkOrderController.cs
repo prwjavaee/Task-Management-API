@@ -25,12 +25,14 @@ namespace api.Controllers
         private readonly ApplicationDBContext _context;
         private readonly IWorkOrderRepository _workOrderRepo;
         private readonly UserManager<AppUser> _userManager;
+        private readonly IWorkOrderService _workOrderService;
 
-        public WorkOrderController(ApplicationDBContext context,IWorkOrderRepository workOrderRepo,UserManager<AppUser> userManager)
+        public WorkOrderController(ApplicationDBContext context,IWorkOrderRepository workOrderRepo,UserManager<AppUser> userManager,IWorkOrderService workOrderService)
         {
             _workOrderRepo = workOrderRepo;
             _context = context;
             _userManager = userManager;
+            _workOrderService = workOrderService;
         }
 
         private async Task<AppUser> GetCurrentUserAsync()
@@ -53,11 +55,8 @@ namespace api.Controllers
         {
             //ModelState 請求參數是否符合定義 有上attribute[]的都會檢查
             if (!ModelState.IsValid) return BadRequest(ModelState);
-
-            // var username = User.GetUsername();
             var appUser = await GetCurrentUserAsync();
-
-            var workOrder = await _workOrderRepo.GetAllAsync(query,appUser);
+            var workOrder = await _workOrderService.GetAllAsync(query,appUser);
             var workOrderDto = workOrder.Select(w => w.ToWorkOrderDto()).ToList();
             return Ok(workOrderDto);
         }
@@ -80,6 +79,7 @@ namespace api.Controllers
             var appUser = await GetCurrentUserAsync();
             workOrder.AppUser = appUser;
             await _workOrderRepo.CreateAsync(workOrder);
+            await _workOrderService.ClearWorkOrderCache();
             // ActionName , RouteValue , Obj ; 導向方法，方法參數，回傳類型
             return CreatedAtAction(nameof(GetById), new { id = workOrder.Id }, workOrder.ToWorkOrderDto());
             // return Created();
@@ -93,6 +93,7 @@ namespace api.Controllers
             if (!ModelState.IsValid) return BadRequest(ModelState);
             var workOrder = await _workOrderRepo.UpdateAsync(id, updateDto);
             if (workOrder == null) return NotFound();
+            await _workOrderService.ClearWorkOrderCache();
             return Ok(workOrder.ToWorkOrderDto());
         }
 
@@ -104,6 +105,7 @@ namespace api.Controllers
             if (!ModelState.IsValid) return BadRequest(ModelState);
             var workOrder = await _workOrderRepo.DeleteAsync(id);
             if (workOrder == null) return NotFound();
+            await _workOrderService.ClearWorkOrderCache();
             return NoContent();
         }
 
