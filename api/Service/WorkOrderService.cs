@@ -26,7 +26,7 @@ namespace api.Service
         public async Task<List<WorkOrder>> GetAllAsync(WorkOrderQueryObject query, AppUser user)
         {
             var db = _redis.GetDatabase();
-            var cacheKey = "WorkOrder_GetAll";
+            var cacheKey = $"WorkOrder_GetAll_{user.Id}";
             string cachedData = await db.StringGetAsync(cacheKey);
             List<WorkOrder> workOrders;
 
