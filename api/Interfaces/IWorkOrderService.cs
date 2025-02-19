@@ -10,6 +10,6 @@ namespace api.Interfaces
     public interface IWorkOrderService
     {
         Task<List<WorkOrder>> GetAllAsync(WorkOrderQueryObject queryObject, AppUser appUser);
-        Task ClearWorkOrderCache();
+        Task ClearWorkOrderCache(AppUser appUser);
     }
 }

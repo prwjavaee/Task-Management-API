@@ -51,10 +51,10 @@ namespace api.Service
             }
         }
 
-        public async Task ClearWorkOrderCache()
+        public async Task ClearWorkOrderCache(AppUser user)
         {
             var db = _redis.GetDatabase();
-            var cacheKey = "WorkOrder_GetAll";
+            var cacheKey = $"WorkOrder_GetAll_{user.Id}";
             await db.KeyDeleteAsync(cacheKey);
         }
         

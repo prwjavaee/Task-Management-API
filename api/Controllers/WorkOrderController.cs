@@ -79,7 +79,7 @@ namespace api.Controllers
             var appUser = await GetCurrentUserAsync();
             workOrder.AppUser = appUser;
             await _workOrderRepo.CreateAsync(workOrder);
-            await _workOrderService.ClearWorkOrderCache();
+            await _workOrderService.ClearWorkOrderCache(appUser);
             // ActionName , RouteValue , Obj ; 導向方法，方法參數，回傳類型
             return CreatedAtAction(nameof(GetById), new { id = workOrder.Id }, workOrder.ToWorkOrderDto());
             // return Created();
@@ -93,7 +93,8 @@ namespace api.Controllers
             if (!ModelState.IsValid) return BadRequest(ModelState);
             var workOrder = await _workOrderRepo.UpdateAsync(id, updateDto);
             if (workOrder == null) return NotFound();
-            await _workOrderService.ClearWorkOrderCache();
+            var appUser = await GetCurrentUserAsync();
+            await _workOrderService.ClearWorkOrderCache(appUser);
             return Ok(workOrder.ToWorkOrderDto());
         }
 
@@ -105,7 +106,8 @@ namespace api.Controllers
             if (!ModelState.IsValid) return BadRequest(ModelState);
             var workOrder = await _workOrderRepo.DeleteAsync(id);
             if (workOrder == null) return NotFound();
-            await _workOrderService.ClearWorkOrderCache();
+            var appUser = await GetCurrentUserAsync();
+            await _workOrderService.ClearWorkOrderCache(appUser);
             return NoContent();
         }
 
