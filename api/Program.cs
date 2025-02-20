@@ -143,8 +143,9 @@ builder.Services.AddAuthorization(options =>
 {
     options.AddPolicy("AdminOnly", policy => policy.RequireRole("Admin"));
     options.AddPolicy("UserOnly", policy => policy.RequireRole("User"));
-    // Claim 自定義授權
-    options.AddPolicy("AuthorizedUserOnly", policy => policy.RequireClaim("Permission", "Edit"));
+    // Claim 中自定義的授權
+    options.AddPolicy("PermissionEdit", policy => policy.RequireClaim("Permission", "Edit"));
+    options.AddPolicy("PermissionDelete", policy => policy.RequireClaim("Permission", "Delete"));
 });
 
 
@@ -159,6 +160,19 @@ builder.Services.AddScoped<IWorkOrderService, WorkOrderService>();
 
 
 var app = builder.Build();
+
+using (var scope = app.Services.CreateScope())
+{
+    var services = scope.ServiceProvider;
+    var userManager = services.GetRequiredService<UserManager<AppUser>>();
+    var context = services.GetRequiredService<ApplicationDBContext>();
+
+    // 確保資料庫遷移
+    context.Database.Migrate();
+
+    // 創建 Admin 用戶
+    ApplicationDBContext.SeedAdminUserAsync(userManager).Wait(); // 非同步方法需要 Wait()，但要確保它不阻塞主執行緒
+}
 
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())

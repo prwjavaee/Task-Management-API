@@ -12,7 +12,7 @@ namespace api.Extensions
         {
             //WS-Federation 及 SAML 的標準 Claim 類型，表示「用戶的名字」。
             return user.Claims.SingleOrDefault(x => x.Type.Equals("http://schemas.xmlsoap.org/ws/2005/05/identity/claims/givenname")).Value;
-            // return claim ?? "guest";
+            // return user.Claims.SingleOrDefault(x => x.Type.Equals(ClaimTypes.GivenName))?.Value;
         }
     }
 }

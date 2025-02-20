@@ -70,7 +70,7 @@ namespace api.Controllers
             return Ok(workOrder.ToWorkOrderDto());
         }
 
-        [Authorize(Policy = "AuthorizedUserOnly")]
+        [Authorize(Policy = "PermissionEdit")]
         [HttpPost]
         public async Task<IActionResult> Create([FromBody] WorkOrderCreateRequestDto CreateDto)
         {
@@ -85,7 +85,7 @@ namespace api.Controllers
             // return Created();
         }
 
-        [Authorize(Policy = "AuthorizedUserOnly")]
+        [Authorize(Policy = "PermissionEdit")]
         [HttpPut]
         [Route("{id:int}")]
         public async Task<IActionResult> Update([FromRoute] int id, [FromBody] WorkOrderUpdateRequestDto updateDto)
@@ -98,7 +98,7 @@ namespace api.Controllers
             return Ok(workOrder.ToWorkOrderDto());
         }
 
-        [Authorize(Policy = "AuthorizedUserOnly")]
+        [Authorize(Policy = "PermissionDelete")]
         [HttpDelete]
         [Route("{id:int}")]
         public async Task<IActionResult> Delete([FromRoute] int id)

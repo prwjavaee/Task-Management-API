@@ -7,6 +7,7 @@ using System.Text;
 using System.Threading.Tasks;
 using api.Interfaces;
 using api.Models;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.IdentityModel.Tokens;
 
 namespace api.Service
@@ -16,24 +17,38 @@ namespace api.Service
         //appsettings.json
         private readonly IConfiguration _config;
         private readonly SymmetricSecurityKey _key;
+        private readonly UserManager<AppUser> _userManager;
+        private readonly RoleManager<IdentityRole> _roleManager;
 
-        public TokenService(IConfiguration config)
+        public TokenService(IConfiguration config, UserManager<AppUser> userManager, RoleManager<IdentityRole> roleManager)
         {
             _config = config;
             //產生密鑰
-            _key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_config["JWT:SigningKey"]));
+            _key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_config["JWT:SigningKey"]!));
+            _userManager = userManager;
+            _roleManager = roleManager;
         }
-        public string CreateToken(AppUser user, List<Claim> userClaims)
+        public async Task<string> CreateToken(AppUser user)
         {
             //JWT Claim
             var claims = new List<Claim>
             {
-                new Claim(JwtRegisteredClaimNames.Email, user.Email),
-                new Claim(JwtRegisteredClaimNames.GivenName, user.UserName)
+                new(JwtRegisteredClaimNames.Email, user.Email),
+                new(JwtRegisteredClaimNames.GivenName, user.UserName)
             };
 
-            // 加入額外 Claims "身分組"
-            claims.AddRange(userClaims);
+            var roles = await _userManager.GetRolesAsync(user);
+            var roleClaimsList = new List<Claim>();
+            foreach (var role in roles)
+            {
+                claims.Add(new Claim(ClaimTypes.Role, role));
+                var roleEntity = await _roleManager.FindByNameAsync(role);
+                if (roleEntity != null){
+                    var roleClaims = await _roleManager.GetClaimsAsync(roleEntity);
+                    roleClaimsList.AddRange(roleClaims);
+                }
+            }
+            claims.AddRange(roleClaimsList);
 
             //JWT 簽名資訊
             var creds = new SigningCredentials(_key, SecurityAlgorithms.HmacSha512Signature);

@@ -42,22 +42,41 @@ namespace api.Data
                 .Property(e => e.Id)
                 .ValueGeneratedOnAdd();
 
-            List<IdentityRole> roles = new List<IdentityRole>
+            // 設定預設角色和角色權限
+            builder.Entity<IdentityRole>().HasData(
+                new IdentityRole { Id = "Admin", Name = "Admin", NormalizedName = "ADMIN" },
+                new IdentityRole { Id = "AuthorizedUser", Name = "AuthorizedUser", NormalizedName = "AUTHORIZEDUSER" },
+                new IdentityRole { Id = "GeneralUser", Name = "GeneralUser", NormalizedName = "GENERALUSER" }
+            );
+
+            builder.Entity<IdentityRoleClaim<string>>().HasData(
+                new IdentityRoleClaim<string> { Id = -1, RoleId = "Admin", ClaimType = "Permission", ClaimValue = "Edit" },
+                new IdentityRoleClaim<string> { Id = -2, RoleId = "Admin", ClaimType = "Permission", ClaimValue = "Delete" },
+                new IdentityRoleClaim<string> { Id = -3, RoleId = "AuthorizedUser", ClaimType = "Permission", ClaimValue = "Edit" }
+            );
+
+        }
+
+        public static async Task SeedAdminUserAsync(UserManager<AppUser> userManager)
+        {
+            var adminUserName = "admin";
+            var adminPassword = "admin";
+            var adminUser = await userManager.FindByNameAsync(adminUserName);
+            if (adminUser == null)
             {
-                new IdentityRole
+                adminUser = new AppUser { 
+                    UserName = adminUserName, 
+                    Email = "pengrenwei89@gmail.com", 
+                    EmailConfirmed = true 
+                };
+                var result = await userManager.CreateAsync(adminUser, adminPassword);
+                if (result.Succeeded)
                 {
-                    Id = "Admin",   // 手動設定 ID
-                    Name = "Admin",
-                    NormalizedName = "ADMIN"
-                },
-                new IdentityRole
-                {
-                    Id = "User",    // 手動設定 ID
-                    Name = "User",
-                    NormalizedName = "USER"
-                },
-            };
-            builder.Entity<IdentityRole>().HasData(roles);
+                    await userManager.AddToRoleAsync(adminUser, "Admin");
+                }
+            }
+
+
         }
 
 

@@ -25,33 +25,26 @@ namespace api.Controllers
             _tokenService = tokenService;
             _signinManager = signInManager;
         }
+
         [HttpPost("login")]
         public async Task<IActionResult> Login(LoginDto loginDto)
         {
-            if (!ModelState.IsValid)
-                return BadRequest(ModelState);
+            if (!ModelState.IsValid) return BadRequest(ModelState);
 
             var user = await _userManager.Users.FirstOrDefaultAsync(x => x.UserName == loginDto.Username.ToLower());
             if (user == null) return Unauthorized("Invalid username!");
 
             var result = await _signinManager.CheckPasswordSignInAsync(user, loginDto.Password, false);
             if (!result.Succeeded) return Unauthorized("Username not found or password incorrect");
-
-            //找到目前用戶的所有claim
-            var userClaims = await _userManager.GetClaimsAsync(user);
-            //找到目前用戶的所有role 本專案目前只有user&admin
-            // var roles = await _userManager.GetRolesAsync(user);
-            // foreach (var role in roles)
-            // {
-            //     userClaims.Add(new Claim(ClaimTypes.Role, role));
-            // }
+            
+            var token = await _tokenService.CreateToken(user);
 
             return Ok(
                 new NewUserDto
                 {
                     UserName = user.UserName,
                     Email = user.Email,
-                    Token = _tokenService.CreateToken(user,userClaims.ToList<Claim>())
+                    Token = token
                 }
             );
         }
@@ -62,34 +55,25 @@ namespace api.Controllers
         {
             try
             {
-                if (!ModelState.IsValid)
-                    return BadRequest(ModelState);
+                if (!ModelState.IsValid) return BadRequest(ModelState);
 
                 var appUser = new AppUser
                 {
                     UserName = registerDto.Username,
-                    Email = registerDto.Email
+                    Email = registerDto.Email,
                 };
 
-                //Hash密碼加密後存入資料庫，不會存入明文密碼 
+                // Hash密碼加密後存入資料庫，不會存入明文密碼 
                 var createdUser = await _userManager.CreateAsync(appUser, registerDto.Password);
 
                 if (createdUser.Succeeded)
                 {
-                    var roleResult = await _userManager.AddToRoleAsync(appUser, "User");
-                    if (roleResult.Succeeded)
-                    {
-                        return Ok(appUser);
-                    }
-                    else
-                    {
-                        return StatusCode(500, roleResult.Errors);
-                    }
+                    var roleResult = await _userManager.AddToRoleAsync(appUser, "GeneralUser");
+                    if (!roleResult.Succeeded)return StatusCode(500, roleResult.Errors);
+
+                    return Ok(appUser);
                 }
-                else
-                {
-                    return StatusCode(500, createdUser.Errors);
-                }
+                else return StatusCode(500, createdUser.Errors);
             }
             catch (Exception e)
             {
@@ -103,8 +87,7 @@ namespace api.Controllers
         {
             try
             {
-                if (!ModelState.IsValid)
-                    return BadRequest(ModelState);
+                if (!ModelState.IsValid) return BadRequest(ModelState);
 
                 var appUser = new AppUser
                 {
@@ -116,17 +99,10 @@ namespace api.Controllers
 
                 if (createdUser.Succeeded)
                 {
-                    var roleResult = await _userManager.AddToRoleAsync(appUser, "User");
-                    if (roleResult.Succeeded)
-                    {
-                        // 在註冊用戶時添加 Claim
-                        await _userManager.AddClaimAsync(appUser, new Claim("Permission", "Edit"));
-                        return Ok(appUser);
-                    }
-                    else
-                    {
-                        return StatusCode(500, roleResult.Errors);
-                    }
+                    var roleResult = await _userManager.AddToRoleAsync(appUser, "AuthorizedUser");
+                    if (!roleResult.Succeeded) return StatusCode(500, roleResult.Errors);
+
+                    return Ok(appUser);
                 }
                 else
                 {

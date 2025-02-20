@@ -12,7 +12,7 @@ using api.Data;
 namespace api.Migrations
 {
     [DbContext(typeof(ApplicationDBContext))]
-    [Migration("20250214125614_Init")]
+    [Migration("20250220141311_Init")]
     partial class Init
     {
         /// <inheritdoc />
@@ -60,9 +60,15 @@ namespace api.Migrations
                         },
                         new
                         {
-                            Id = "User",
-                            Name = "User",
-                            NormalizedName = "USER"
+                            Id = "AuthorizedUser",
+                            Name = "AuthorizedUser",
+                            NormalizedName = "AUTHORIZEDUSER"
+                        },
+                        new
+                        {
+                            Id = "GeneralUser",
+                            Name = "GeneralUser",
+                            NormalizedName = "GENERALUSER"
                         });
                 });
 
@@ -89,6 +95,29 @@ namespace api.Migrations
                     b.HasIndex("RoleId");
 
                     b.ToTable("AspNetRoleClaims", (string)null);
+
+                    b.HasData(
+                        new
+                        {
+                            Id = -1,
+                            ClaimType = "Permission",
+                            ClaimValue = "Edit",
+                            RoleId = "Admin"
+                        },
+                        new
+                        {
+                            Id = -2,
+                            ClaimType = "Permission",
+                            ClaimValue = "Delete",
+                            RoleId = "Admin"
+                        },
+                        new
+                        {
+                            Id = -3,
+                            ClaimType = "Permission",
+                            ClaimValue = "Edit",
+                            RoleId = "AuthorizedUser"
+                        });
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserClaim<string>", b =>

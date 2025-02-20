@@ -233,7 +233,18 @@ namespace api.Migrations
                 values: new object[,]
                 {
                     { "Admin", null, "Admin", "ADMIN" },
-                    { "User", null, "User", "USER" }
+                    { "AuthorizedUser", null, "AuthorizedUser", "AUTHORIZEDUSER" },
+                    { "GeneralUser", null, "GeneralUser", "GENERALUSER" }
+                });
+
+            migrationBuilder.InsertData(
+                table: "AspNetRoleClaims",
+                columns: new[] { "Id", "ClaimType", "ClaimValue", "RoleId" },
+                values: new object[,]
+                {
+                    { -3, "Permission", "Edit", "AuthorizedUser" },
+                    { -2, "Permission", "Delete", "Admin" },
+                    { -1, "Permission", "Edit", "Admin" }
                 });
 
             migrationBuilder.CreateIndex(
