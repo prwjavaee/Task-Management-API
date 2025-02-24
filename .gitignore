@@ -10,6 +10,7 @@
 # VS Code 設定
 .vscode/
 *.code-workspace
+*.sln
 
 # 使用者設定與 IDE 特定檔案
 *.suo
