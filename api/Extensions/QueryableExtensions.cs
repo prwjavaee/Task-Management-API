@@ -21,6 +21,17 @@ namespace api.Extensions
                 workOrders = workOrders.Where(w => w.Title.Contains(queryObject.Title));
             }
             
+            workOrders.ApplySorting(queryObject);
+            
+            var skipNumber = (queryObject.PageNumber - 1) * queryObject.PageSize;
+            workOrders = workOrders.Skip(skipNumber).Take(queryObject.PageSize);
+
+            return workOrders;
+        }
+
+        public static IQueryable<WorkOrder> ApplySorting(this IQueryable<WorkOrder> workOrders, WorkOrderQueryObject queryObject)
+        {
+            
             if (!string.IsNullOrWhiteSpace(queryObject.SortBy))
             {
                 if (queryObject.SortBy.Equals("Title", StringComparison.OrdinalIgnoreCase))
@@ -33,10 +44,8 @@ namespace api.Extensions
                 }
             }
 
-            var skipNumber = (queryObject.PageNumber - 1) * queryObject.PageSize;
-            workOrders = workOrders.Skip(skipNumber).Take(queryObject.PageSize);
-
             return workOrders;
         }
+
     }
 }
