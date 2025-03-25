@@ -11,7 +11,7 @@
 
 - **AppUser** (使用者) 👉 用來測試 JWT 驗證
 - **WorkOrder** (任務) 👉 用來測試 CRUD
-- **ApiLog** (Api日誌) 👉 用來紀錄 Api 操作紀錄
+- **ApiLog** (Api 日誌) 👉 用來紀錄 Api 操作紀錄
 - **ErrorLog** (錯誤日誌) 👉 用來紀錄身分認證與授權失敗以及錯誤處理
 
 ## 📌 最簡可行產品 MVP
@@ -32,8 +32,3 @@
 - 🔹 **角色權限 (ASP.NET Core Identity)** 👉 限制 API 操作權限
 - 🔹 **日誌紀錄 (Middleware & Actionfilter)** 👉 API 操作、身分認證與授權失敗紀錄，以及 錯誤處理
 - 🔹 **Redis Cache** 👉 加速查詢效率
-
-## 後續待擴充
-
-- 🚀 **SignalR 即時通知** 👉 新增任務時即時推送
-- 🚀 **Docker 部屬** 👉 整合容器化部署
