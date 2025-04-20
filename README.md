@@ -1,11 +1,10 @@
 # Task Management API 🚀
 
-🔗 [簡報技術詳解](https://docs.google.com/presentation/d/15zhCLoS-W1WvkpIPMBhoeheRBofIomrQtAeAGdXfk4w/edit#slide=id.p) (完善中)
+🔗 [簡報技術詳解](https://docs.google.com/presentation/d/15zhCLoS-W1WvkpIPMBhoeheRBofIomrQtAeAGdXfk4w/edit#slide=id.p)
 
 **ASP.NET Core** 的後端 API，提供 **任務管理** 功能，支援 **JWT 驗證、角色權限管理**，並透過 **LINQ** 進行查詢最佳化（分頁、排序、模糊查詢）。
 **日誌紀錄**功能則涵蓋了 **Middleware** 層級的**錯誤處理、身分認證與授權失敗紀錄**，以及 **ActionFilter** 層級的 **API 操作紀錄**。
 新增 **Redis Cache** 功能，進一步優化查詢效率，提升系統效能。
-未來計劃擴展的功能包括 **SignalR 即時通知和 Docker 部屬**等，以進一步提高系統的性能與擴展性。
 
 ## 📌 核心表格
 

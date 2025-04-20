@@ -66,7 +66,8 @@ builder.Services.AddDbContext<ApplicationDBContext>(options =>
 
 // Redis
 builder.Services.AddSingleton<IConnectionMultiplexer>(
-    ConnectionMultiplexer.Connect(builder.Configuration.GetConnectionString("Redis"))
+    // ConnectionMultiplexer.Connect(builder.Configuration.GetConnectionString("Redis"))
+    ConnectionMultiplexer.Connect("redis:6379,abortConnect=false")
 );
 
 // Identity 註冊身份驗證機制 (使用者 & 角色管理)
@@ -167,11 +168,18 @@ using (var scope = app.Services.CreateScope())
     var userManager = services.GetRequiredService<UserManager<AppUser>>();
     var context = services.GetRequiredService<ApplicationDBContext>();
 
-    // 確保資料庫遷移
-    context.Database.Migrate();
+    try
+    {
+        // 確保資料庫遷移
+        context.Database.Migrate();
+        // 創建 Admin 用戶
+        ApplicationDBContext.SeedAdminUserAsync(userManager).Wait(); // 非同步方法需要 Wait()，但要確保它不阻塞主執行緒    
+    }
+    catch (Exception ex)
+    {
+        Console.WriteLine($"[Startup Error] 資料庫初始化失敗：{ex.Message}");
+    }
 
-    // 創建 Admin 用戶
-    ApplicationDBContext.SeedAdminUserAsync(userManager).Wait(); // 非同步方法需要 Wait()，但要確保它不阻塞主執行緒
 }
 
 // Configure the HTTP request pipeline.
