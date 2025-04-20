@@ -5,6 +5,7 @@
 **ASP.NET Core** 的後端 API，提供 **任務管理** 功能，支援 **JWT 驗證、角色權限管理**，並透過 **LINQ** 進行查詢最佳化（分頁、排序、模糊查詢）。
 **日誌紀錄**功能則涵蓋了 **Middleware** 層級的**錯誤處理、身分認證與授權失敗紀錄**，以及 **ActionFilter** 層級的 **API 操作紀錄**。
 新增 **Redis Cache** 功能，進一步優化查詢效率，提升系統效能。
+同時導入 **Docker 容器化部署**，強化系統的可攜性與部署一致性，為未來 CI/CD 整合打下基礎。
 
 ## 📌 核心表格
 
@@ -20,6 +21,7 @@
 - ✅ 角色權限 (ASP.NET Core Identity)
 - ✅ 日誌紀錄 (Middleware & ActionFilter)
 - ✅ Redis Cache 優化查詢效率
+- ✅ Docker 化部署環境，提升開發與測試的一致性
 
 ## 核心技術
 
@@ -31,3 +33,4 @@
 - 🔹 **角色權限 (ASP.NET Core Identity)** 👉 限制 API 操作權限
 - 🔹 **日誌紀錄 (Middleware & Actionfilter)** 👉 API 操作、身分認證與授權失敗紀錄，以及 錯誤處理
 - 🔹 **Redis Cache** 👉 加速查詢效率
+- 🔹 **Docker / Docker Compose** 👉 建立可攜式部署環境
