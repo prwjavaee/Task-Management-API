@@ -25,3 +25,6 @@ jobs:
 
       - name: Run tests
         run: dotnet test TaskApi.sln --no-build
+
+      - name: Build Docker image
+        run: docker build -t taskapi-image .
